@@ -1,0 +1,33 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "roboto-regular";
+  src: url("/public//fonts/Roboto-Regular.ttf");
+}
+@font-face {
+  font-family: "roboto-bold";
+  src: url("/public//fonts/Roboto-Bold.ttf");
+}
+@font-face {
+  font-family: "roboto-light";
+  src: url("/public//fonts/Roboto-Light.ttf");
+}
+@font-face {
+  font-family: "roboto-medium";
+  src: url("/public//fonts/Roboto-Medium.ttf");
+}
+@font-face {
+  font-family: "poppins-regular";
+  src: url("/public//fonts/Poppins-Regular.ttf");
+}
+
+@font-face {
+  font-family: "poppins-bold";
+  src: url("/public//fonts/Poppins-Bold.ttf");
+}
+@font-face {
+  font-family: "poppins-light";
+  src: url("/public//fonts/Poppins-Light.ttf");
+}
