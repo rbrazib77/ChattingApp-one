@@ -1,78 +1,43 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { signUp } from "../../validation/validation";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  sendEmailVerification,
-  updateProfile,
-} from "firebase/auth";
+import { login } from "../../validation/validation";
+import { getAuth, signInWithEmailAndPassword,updateProfile } from "firebase/auth";
 import { ClipLoader } from "react-spinners";
 import { Link, useNavigate } from "react-router-dom";
-
-const RegFromCom = ({ toast }) => {
-  const navigate = useNavigate();
+import { useDispatch } from "react-redux";
+import { LoggedInUser } from "../../features/Slices/LoginSlice";
+const LoginFromCom = ({ toast }) => {
+ const dispatch=useDispatch()
   const [loader, setLoader] = useState(false);
+  const navigate = useNavigate();
   const auth = getAuth();
   const initialValues = {
-    fullName: "",
     email: "",
     password: "",
   };
   const formik = useFormik({
     initialValues,
     onSubmit: () => {
-      createNewUser();
+      loginUser();
     },
-    validationSchema: signUp,
+    validationSchema: login,
   });
 
-  const createNewUser = () => {
+  const loginUser = () => {
     setLoader(true);
-    createUserWithEmailAndPassword(
+    signInWithEmailAndPassword(
       auth,
       formik.values.email,
       formik.values.password
     )
-      .then(() => {
-        // Signed up
-        setLoader(false);
-        sendEmailVerification(auth.currentUser)
-          .then(() => {
-            updateProfile(auth.currentUser, {
-              displayName: formik.values.fullName,
-              // photoURL:
-            })
-              .then(() => {
-                console.log("Name set");
-              })
-              .catch((error) => {
-                console.log(error);
-              });
-              toast.success("Email Sent For Verifation", {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "colored",
-              });
-
-             let redirecting= setTimeout(()=>{
-                navigate("/login")
-                clearTimeout(redirecting)
-              },3000)
-              
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      })
-      .catch((error) => {
-        if (error.message.includes("auth/email-already-in-use")) {
-          toast.error("Email-Already-in-Use", {
+      .then(({user}) => {
+        console.log(user);
+        if(user.emailVerified==true){
+          dispatch(LoggedInUser(user))
+          localStorage.setItem("user",JSON.stringify(user))
+          navigate("/")
+        }else{
+          toast.error("Please Verify your Email", {
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: true,
@@ -82,38 +47,44 @@ const RegFromCom = ({ toast }) => {
             progress: undefined,
             theme: "colored",
           });
-          setLoader(false);
+        }
+        setLoader(false);
+      })
+      .catch((error) => {
+        setLoader(false);
+        if (error.message.includes("auth/invalid-credential")) {
+          toast.error("Email Nai Use", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
+        } else if (error.message.includes("password")) {
+          toast.error("Password Worng", {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: true,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "colored",
+          });
         }
       });
   };
+
   return (
     <>
-      <div className="lg:pr-20">
+      <div className="lg:pr-28">
         <h1 className="text-center text-primary  text-5xl font-robotoMedium mb-6">
-          Registration
+          Login
         </h1>
         <form onSubmit={formik.handleSubmit}>
-          <div className="flex flex-col mb-6">
-            <label
-              className="mb-2 text-base font-poppinsRegular"
-              htmlFor="username">
-              Username*
-            </label>
-            <input
-              type="text"
-              id="username"
-              placeholder="Name"
-              className="border-2 border-gray-500 outline-none py-2 px-1"
-              name="fullName"
-              value={formik.values.fullName}
-              onChange={formik.handleChange}
-            />
-            {formik.errors.fullName && formik.touched.fullName && (
-              <p className="mt-2 text-red-600 font-robotoRegular text-base">
-                {formik.errors.fullName}
-              </p>
-            )}
-          </div>
           <div className=" flex flex-col mb-6">
             <label
               className="mb-2 text-base font-poppinsRegular"
@@ -160,13 +131,13 @@ const RegFromCom = ({ toast }) => {
             disabled={loader}
             type="submit"
             className="py-2 px-4 bg-primary font-robotoMedium text-lg text-white rounded-sm w-full mb-2 mt-4">
-            {loader ? <ClipLoader color="#fff" /> : " Sign Up"}
+            {loader ? <ClipLoader color="#fff" /> : " Login"}
           </button>
         </form>
         <p className="mb-6">
-          Already have an Account
+          Created A New Account
           <span className="text-primary font-robotoMedium cursor-pointer pl-1 underline">
-            <Link to="/login">Sign In</Link>
+            <Link to="/registration">Sign Up</Link>
           </span>
         </p>
       </div>
@@ -174,4 +145,4 @@ const RegFromCom = ({ toast }) => {
   );
 };
 
-export default RegFromCom;
+export default LoginFromCom;

@@ -31,3 +31,30 @@
   font-family: "poppins-light";
   src: url("/public//fonts/Poppins-Light.ttf");
 }
+.leftbar li {
+  margin-top: 50px;
+  margin-left: auto !important;
+  padding: 20px 0;
+  border-top-left-radius: 50px;
+  width: 90%;
+  position: relative;
+}
+
+.leftbar li::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  content: "";
+  width: 8px;
+  height: 100%;
+  background-color: #086ff2;
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+.active {
+  background: white;
+}
+
+::-webkit-scrollbar{
+  display: none;
+}

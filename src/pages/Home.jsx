@@ -1,9 +1,23 @@
-import React from 'react'
+import FriendsRequests from "../components/FriendsRequests";
+import Friends from "../components/Friends";
+import Userlists from "../components/UserLists";
 
 const Home = () => {
   return (
-    <div>Home</div>
-  )
-}
+    <>
+      <div className="grid grid-cols-[2fr,3fr,3fr] gap-x-10">
+        <div className="w-full  ">
+          <Userlists />
+        </div>
+        <div className="w-full ">
+          <FriendsRequests />
+        </div>
+        <div className="w-full ">
+          <Friends />
+        </div>
+      </div>
+    </>
+  );
+};
 
-export default Home
+export default Home;
